@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">PhotoPicker</string>
+    <string name="all_photo_name">所有图片</string>
 </resources>
