@@ -2,5 +2,6 @@
     <string name="app_name">PhotoPicker</string>
     <string name="all_photo_name">所有图片</string>
     <string name="pick_photos">选择图片</string>
-    <string name="menu_title">完成</string>
+    <string name="pick_photo_menu_title">完成</string>
+    <string name="home_menu_title">PhotoPicker</string>
 </resources>
