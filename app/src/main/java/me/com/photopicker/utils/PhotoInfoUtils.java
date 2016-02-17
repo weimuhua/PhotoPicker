@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +50,7 @@ public class PhotoInfoUtils {
         };
 
         Cursor cursor = resolver.query(IMAGE_URI, IMAGE_PROJECTION, selection, selectionArgs, SORT);
+        Log.d(TAG, "cursor size : " + (cursor == null ? "null" : cursor.getCount()));
         if (cursor == null) return null;
 
         List<PhotoDir> photoDirs = parseData(cxt, cursor);
