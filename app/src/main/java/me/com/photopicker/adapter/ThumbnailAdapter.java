@@ -3,6 +3,7 @@ package me.com.photopicker.adapter;
 import android.app.Activity;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,10 +28,13 @@ public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailAdapter.Thum
     private List<Photo> mPhotoList;
     private ArrayList<String> mSelectList;
     private int[] mSelectTipId;
+    private Toolbar mToolbar;
+    private int mMaxSize;
 
-    public ThumbnailAdapter(Activity activity) {
+    public ThumbnailAdapter(Activity activity, Toolbar toolbar) {
         mActivity = activity;
         mSelectList = new ArrayList<>();
+        mToolbar = toolbar;
         mSelectTipId = new int[] {
                 R.mipmap.photo_selected,
                 R.mipmap.photo_unselected
@@ -63,12 +67,17 @@ public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailAdapter.Thum
     public void setData(List<Photo> photoList) {
         if (photoList != null) {
             mPhotoList = photoList;
+            mMaxSize = mPhotoList.size();
             notifyDataSetChanged();
         }
     }
 
     public ArrayList<String> getSelectList() {
         return mSelectList;
+    }
+
+    private void changeToolbarText() {
+        mToolbar.setTitle(mSelectList.size() + "/" + mMaxSize);
     }
 
     class ThumbnailViewHolder extends RecyclerView.ViewHolder
@@ -111,6 +120,7 @@ public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailAdapter.Thum
                 selectedTip.setImageResource(mSelectTipId[0]);
                 mSelectList.add(photo.path);
             }
+            changeToolbarText();
         }
     }
 }

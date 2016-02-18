@@ -103,7 +103,7 @@ public class PickPhotoActivity extends AppCompatActivity {
     }
 
     private void initData() {
-        mAdapter = new ThumbnailAdapter(this);
+        mAdapter = new ThumbnailAdapter(this, mToolbar);
         MhThreadPool.getInstance().addUiTask(new Runnable() {
             @Override
             public void run() {
