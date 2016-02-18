@@ -21,4 +21,21 @@ public class PhotoDir {
         }
         return paths;
     }
+
+    @Override
+    public int hashCode() {
+        int result = id.hashCode();
+        result = 31 * result + name.hashCode();
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PhotoDir)) return false;
+
+        PhotoDir dir = (PhotoDir) o;
+
+        return name.equals(dir.name) && id.equals(dir.id);
+    }
 }

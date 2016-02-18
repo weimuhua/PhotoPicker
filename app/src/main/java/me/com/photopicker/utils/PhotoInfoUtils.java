@@ -81,6 +81,7 @@ public class PhotoInfoUtils {
                     dir.coverPath = path;
                     dir.addPhoto(imageId, path);
                     dir.date = cursor.getLong(cursor.getColumnIndexOrThrow(DATE_ADDED));
+                    photoDirs.add(dir);
                 } else {
                     photoDirs.get(photoDirs.indexOf(dir)).addPhoto(imageId, path);
                 }
@@ -94,6 +95,7 @@ public class PhotoInfoUtils {
             allPhotoDir.coverPath = allPhotoPaths.get(0);
         }
         photoDirs.add(ALL_PHOTOS_INDEX, allPhotoDir);
+        Log.d(TAG, "photoDirs size : " + photoDirs.size());
 
         return photoDirs;
     }

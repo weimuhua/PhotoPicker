@@ -9,11 +9,17 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.ListPopupWindow;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.util.List;
 
@@ -23,8 +29,10 @@ import me.com.photopicker.adapter.ThumbnailAdapter;
 import me.com.photopicker.model.Photo;
 import me.com.photopicker.model.PhotoDir;
 import me.com.photopicker.utils.PhotoInfoUtils;
+import me.com.photopicker.view.AlbumPopupWindow;
 
-public class PickPhotoActivity extends AppCompatActivity {
+public class PickPhotoActivity extends AppCompatActivity implements View.OnClickListener,
+        AdapterView.OnItemClickListener {
 
     private static final String TAG = "PickPhotoActivity";
 
@@ -33,7 +41,10 @@ public class PickPhotoActivity extends AppCompatActivity {
     private Context mContext;
 
     private Toolbar mToolbar;
+    private TextView mChangeDirTv;
     private RecyclerView mRecyclerView;
+    private AlbumPopupWindow mPopupWindow;
+
     private ThumbnailAdapter mAdapter;
     private List<PhotoDir> mPhotoDirList;
 
@@ -47,6 +58,7 @@ public class PickPhotoActivity extends AppCompatActivity {
                                 = mPhotoDirList.get(PhotoInfoUtils.ALL_PHOTOS_INDEX).photoList;
                         mAdapter.setData(allPhotoList);
                         mRecyclerView.setAdapter(mAdapter);
+                        mPopupWindow.setPhotoDirList(mPhotoDirList);
                     }
                     break;
             }
@@ -100,6 +112,13 @@ public class PickPhotoActivity extends AppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
+
+        mPopupWindow = new AlbumPopupWindow(mContext);
+        mPopupWindow.setAnchorView(findViewById(R.id.pick_photo_anchor));
+        mPopupWindow.setOnItemClickListener(this);
+
+        mChangeDirTv = (TextView) findViewById(R.id.choose_dir_tv);
+        mChangeDirTv.setOnClickListener(this);
     }
 
     private void initData() {
@@ -119,6 +138,27 @@ public class PickPhotoActivity extends AppCompatActivity {
         Intent intent = new Intent();
         setResult(RESULT_CANCELED, intent);
         finish();
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v == mChangeDirTv) {
+            mPopupWindow.show();
+        }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        PhotoDir selectDir = mPopupWindow.getSelectPhotoDir(position);
+
+        mAdapter.setData(selectDir.photoList);
+        mRecyclerView.scrollToPosition(0);
+
+        mChangeDirTv.setText(mPopupWindow.getSelectPhotoDir(position).name);
+
+        mPopupWindow.setSelectDir(position);
+        mPopupWindow.getListView().smoothScrollToPosition(position);
+        mPopupWindow.dismiss();
     }
 }
 
