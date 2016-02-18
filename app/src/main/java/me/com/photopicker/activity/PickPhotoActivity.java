@@ -1,6 +1,7 @@
 package me.com.photopicker.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.content.ContextCompat;
@@ -70,6 +71,15 @@ public class PickPhotoActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent = new Intent();
+        Log.d(TAG, "mAdapter.getSelectList() : " + mAdapter.getSelectList().size());
+        if (mAdapter.getSelectList().isEmpty()) {
+            setResult(RESULT_CANCELED, intent);
+        } else {
+            intent.putStringArrayListExtra(MainActivity.EXTRA_PICK_PHOTOS, mAdapter.getSelectList());
+            setResult(RESULT_OK, intent);
+        }
+
         int id = item.getItemId();
         if (id == R.id.action_finish) {
             finish();
@@ -106,6 +116,8 @@ public class PickPhotoActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        Intent intent = new Intent();
+        setResult(RESULT_CANCELED, intent);
         finish();
     }
 }

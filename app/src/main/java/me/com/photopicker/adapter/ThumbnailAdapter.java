@@ -25,7 +25,7 @@ public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailAdapter.Thum
 
     private Activity mActivity;
     private List<Photo> mPhotoList;
-    private List<String> mSelectList;
+    private ArrayList<String> mSelectList;
     private int[] mSelectTipId;
 
     public ThumbnailAdapter(Activity activity) {
@@ -67,7 +67,7 @@ public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailAdapter.Thum
         }
     }
 
-    public List<String> getSelectList() {
+    public ArrayList<String> getSelectList() {
         return mSelectList;
     }
 
