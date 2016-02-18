@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
-    tools:context="me.com.photopicker.activity.PickPhotoActivity">
+    android:background="@android:color/black">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
@@ -20,5 +18,29 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/toolbar" />
+
+    <LinearLayout
+        android:id="@+id/pick_photo_anchor"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/pick_photo_anchor_color"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/choose_dir_button"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="8dp"
+            android:drawablePadding="5dp"
+            android:drawableRight="@mipmap/text_indicator"
+            android:gravity="left|center"
+            android:maxWidth="160dp"
+            android:minWidth="100dp"
+            android:text="@string/all_photo_name"
+            android:textColor="@android:color/white"
+            android:textSize="16sp" />
+
+    </LinearLayout>
 
 </RelativeLayout>
