@@ -1,0 +1,3 @@
+[submodule "submodule/CommonTools"]
+	path = submodule/CommonTools
+	url = ../CommonTools.git
