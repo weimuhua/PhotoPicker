@@ -6,4 +6,5 @@
     <string name="home_menu_title">PhotoPicker</string>
     <string name="pick_photos_size">选择了%1s张照片</string>
     <string name="album_size">%1s张</string>
+    <string name="can_not_get_photo">手机中无相片</string>
 </resources>

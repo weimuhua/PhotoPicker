@@ -2,14 +2,11 @@ package me.com.photopicker.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.ListPopupWindow;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -17,26 +14,27 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
-import baidu.com.commontools.threadpool.MhThreadPool;
 import me.com.photopicker.R;
 import me.com.photopicker.adapter.ThumbnailAdapter;
 import me.com.photopicker.model.Photo;
 import me.com.photopicker.model.PhotoDir;
 import me.com.photopicker.utils.PhotoInfoUtils;
 import me.com.photopicker.view.AlbumPopupWindow;
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 public class PickPhotoActivity extends AppCompatActivity implements View.OnClickListener,
         AdapterView.OnItemClickListener {
 
     private static final String TAG = "PickPhotoActivity";
-
-    private static final int MSG_LOAD_PHOTOS_DONE = 1;
 
     private Context mContext;
 
@@ -47,24 +45,6 @@ public class PickPhotoActivity extends AppCompatActivity implements View.OnClick
 
     private ThumbnailAdapter mAdapter;
     private List<PhotoDir> mPhotoDirList;
-
-    private Handler mHandler = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message msg) {
-            switch (msg.what) {
-                case MSG_LOAD_PHOTOS_DONE:
-                    if (mPhotoDirList != null) {
-                        List<Photo> allPhotoList
-                                = mPhotoDirList.get(PhotoInfoUtils.ALL_PHOTOS_INDEX).photoList;
-                        mAdapter.setData(allPhotoList);
-                        mRecyclerView.setAdapter(mAdapter);
-                        mPopupWindow.setPhotoDirList(mPhotoDirList);
-                    }
-                    break;
-            }
-            return false;
-        }
-    });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,13 +103,35 @@ public class PickPhotoActivity extends AppCompatActivity implements View.OnClick
 
     private void initData() {
         mAdapter = new ThumbnailAdapter(this, mToolbar);
-        MhThreadPool.getInstance().addUiTask(new Runnable() {
-            @Override
-            public void run() {
-                mPhotoDirList = PhotoInfoUtils.getPhotos(mContext);
-                mHandler.sendEmptyMessage(MSG_LOAD_PHOTOS_DONE);
-            }
-        });
+
+        Observable
+                .create(new Observable.OnSubscribe<List<PhotoDir>>() {
+                    @Override
+                    public void call(Subscriber<? super List<PhotoDir>> subscriber) {
+                        subscriber.onNext(PhotoInfoUtils.getPhotos(mContext));
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<List<PhotoDir>>() {
+                    @Override
+                    public void call(List<PhotoDir> photoDirs) {
+                        mPhotoDirList = photoDirs;
+                        showPhotos();
+                    }
+                });
+    }
+
+    private void showPhotos() {
+        if (mPhotoDirList != null) {
+            List<Photo> allPhotoList
+                    = mPhotoDirList.get(PhotoInfoUtils.ALL_PHOTOS_INDEX).photoList;
+            mAdapter.setData(allPhotoList);
+            mRecyclerView.setAdapter(mAdapter);
+            mPopupWindow.setPhotoDirList(mPhotoDirList);
+        } else {
+            Toast.makeText(mContext, getString(R.string.can_not_get_photo), Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
